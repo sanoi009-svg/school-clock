@@ -1,0 +1,38 @@
+name: Build EXE
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pyinstaller
+
+      - name: Build portable exe
+        run: >
+          pyinstaller --noconfirm --onefile --windowed
+          --name SchoolClock
+          --collect-all PySide6
+          --exclude-module PySide6.QtWebEngineCore
+          --exclude-module PySide6.Qt3DCore
+          --exclude-module PySide6.QtCharts
+          main.py
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: SchoolClock
+          path: dist/SchoolClock.exe
+          retention-days: 30
