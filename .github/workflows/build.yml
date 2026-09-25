@@ -21,18 +21,20 @@ jobs:
           pip install -r requirements.txt
           pip install pyinstaller
 
-      - name: Build portable exe
+      - name: Build portable app
         run: >
-          pyinstaller --noconfirm --onefile --windowed
+          pyinstaller --noconfirm --onedir --windowed
           --name SchoolClock
-          --collect-all PySide6
           --exclude-module PySide6.QtWebEngineCore
           --exclude-module PySide6.Qt3DCore
           --exclude-module PySide6.QtCharts
+          --exclude-module matplotlib
+          --exclude-module numpy
+          --exclude-module PIL
           main.py
 
       - uses: actions/upload-artifact@v4
         with:
           name: SchoolClock
-          path: dist/SchoolClock.exe
+          path: dist/SchoolClock/
           retention-days: 30
